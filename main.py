@@ -19,7 +19,7 @@ wildcard = "Python source (*.py; *.pyc)|*.py;*.pyc|" \
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades +'haarcascade_frontalface_alt.xml')
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
-recognizer.read('/DoAnTotNghiep/TuoiTran.github.io/recognizer/trainingData.yml')
+recognizer.read('/DoAnTotNghiep/TuoiTran.github.io/python/recognizer/trainingData.yml')
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640) 
@@ -112,7 +112,7 @@ def getImageWithID(path):
         IDs.append(Id)
 
         cv2.namedWindow('Training',cv2.WINDOW_AUTOSIZE)
-        processed_img = cv2.resize(faceNp, (120, 80))
+        processed_img = cv2.resize(faceNp, (48, 48))
         cv2.imshow('Training', processed_img)
 
         if(cv2.waitKey(100) == ord('q')):
@@ -227,7 +227,7 @@ class getdata(Getdata):
                 cv2.waitKey(100)
                 if  sampleNum > 50 :
                     cv2.destroyAllWindows()
-                    wx.MessageBox("Successul !")
+                    wx.MessageBox("successful !")
                     break
 app = wx.App()
 #-------------------------------
