@@ -22,9 +22,10 @@ def insertOrUpdate(id, name, gender, dateofbirth, phonenumber):
         isRecorExist = 1
     if(isRecorExist == 0):
         query = "INSERT INTO face(id, name, gender, dateofbirth, phonenumber) VALUES("+ str(id) + ",'"+str(name)+"','"+str(gender)+"','"+str(dateofbirth)+"','"+str(phonenumber)+"')"
+        print('add:', str(query))
     else:
         query = "UPDATE face SET name='" + str(name) + "', gender='" + str(gender) + "' , dateofbirth='" + str(dateofbirth) + "', phonenumber='" + str(phonenumber) + "'WHERE id="+str(id)
-
+        print('update:', str(query))
     cusror.execute(query)
     conn.commit()
     conn.close()

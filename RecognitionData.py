@@ -55,7 +55,7 @@ def add(id, date, name, start_time, gender, dateofbirth, phonenumber):
 
     # tìm nạp các hàng từ đối tượng con trỏ  
     # result = cusror.fetchall()
-    with open('output.csv','w+') as out_csv_file:
+    with open('output.csv','w') as out_csv_file:
         csv_out = csv.writer(out_csv_file)                        
         csv_out.writerow([d[0] for d in cusror.description])
 
@@ -65,7 +65,6 @@ def add(id, date, name, start_time, gender, dateofbirth, phonenumber):
             isRecorExist = 1
         if(isRecorExist == 0):
             query = "INSERT INTO Timekeeping(id, date, name, start_time, gender, dateofbirth, phonenumber) VALUES("+ str(id) + ",'"+ str(date)+"','"+ str(name)+"', '"+ str(start_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')"
-            
             print('add')
 
         else :
@@ -75,12 +74,14 @@ def add(id, date, name, start_time, gender, dateofbirth, phonenumber):
             cusror = conn.execute(query)
             rows = cusror.fetchall()
             for row in rows:
+                
                 print ((row["date"] , row["id"]))
                 print("autoID",row["autoID"])
                 print("id=",str(id))
                 if (str(id) != row["id"]):
                     query = "INSERT INTO Timekeeping( id, date, name, start_time, gender, dateofbirth, phonenumber) VALUES("+str(id)+",'"+ str(date)+"', '"+ str(name)+"', '"+ str(start_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')"   
                     print('addupdate')
+            
     cusror.execute(query)
     conn.commit()
     conn.close()
