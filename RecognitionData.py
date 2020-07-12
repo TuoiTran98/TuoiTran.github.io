@@ -96,19 +96,14 @@ while(True):
     index += 1
     ret, frame = cap.read()
     frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-
     faces = face_cascade.detectMultiScale(
         frame_gray,
         1.1 , 4)
-    # r_faces = m_face_cascade.detectMultiScale(frame, 1.1 , 4)
+
     print(faces)
     
     for(x,y,w,h) in faces:
-        # org
-        #org = (x, y)
-        cv2.rectangle(frame_gray,(x,y),(x+w, y+h), (43, 41 ,182), 2)
-        #cv2.putText(frame_gray, 'Tuoi', org , font, fontScale ,color, thickness, cv2.LINE_AA)
-
+        cv2.rectangle(frame_gray,(x,y),(x+w, y+h), (255 ,0 , 0), 2)
         roi_gray = frame_gray[y: y+h, x: x+w]
         id, confidence =  recognizer.predict(roi_gray)
 
@@ -121,15 +116,15 @@ while(True):
                 start_time = now.strftime("%H:%M:%S")
                 
                 # cv2.putText(frame_gray, "" +str(profile[1]), (x + 80, y + h + 30), font, 1, (43, 41 ,182), 2)
-                cv2.putText(frame_gray, "" +str(id), (x, y + h + 30), font, 1, (43, 41 ,182), 1)
-                cv2.putText(frame_gray, "" +str(profile[1]), (x + 80, y + h + 30), font, 1, (43, 41 ,182), 1)
-                # cv2.putText(frame_gray, "" +str(day), (x, y), font, 1, (43, 41 ,182), 2)
-                # 2s se lưu dữ liệu 1 lần
+                cv2.putText(frame_gray, "" +str(id), (x, y + h + 30), font, 1, (255 ,0 , 0), 1)
+                cv2.putText(frame_gray, "" +str(profile[1]), (x + 80, y + h + 30), font, 1, (255 ,0 , 0), 1)
+                cv2.putText(frame_gray, "" +str(confidence), (x, y), font, 1, (43, 41 ,182), 2)
                 if index >  20 :
                     add(str(id), str(dt_string_day) , str(profile[1]), str(start_time), str(profile[2]) ,str(profile[3]) , str(profile[4]) )
                     index = 0
+                # cv2.putText(frame_gray, "Successful !", (x, y), font, 1, (43, 41 ,182), 1)
         else:
-            cv2.putText(frame_gray, "no Data", (x + 10, y + h + 30), font, 1, (43, 41 ,182), 1)
+            cv2.putText(frame_gray, "Unknow", (x + 10, y + h + 30), font, 1, (255 ,0 , 0), 1)
     
 
     cv2.namedWindow('processed',cv2.WINDOW_AUTOSIZE)
@@ -137,7 +132,6 @@ while(True):
     cv2.imshow('processed', processed_img)
     if(cv2.waitKey(100) == ord('q')):
         break
-
 cap.release()
 cv2.destroyAllWindows()
 

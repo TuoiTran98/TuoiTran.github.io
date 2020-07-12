@@ -84,7 +84,7 @@ while(True):
                     #         cv2.imwrite('dataSet/User.' + str(id) + '.r' + str(sampleNum) + '.jpg', frame_gray[y : y+h, x: x+w])
                     # resized = cv2.resize(frame,(int(frame.shape[1]/2),int(frame.shape[0]/2))) 
     cv2.namedWindow('face',cv2.WINDOW_AUTOSIZE)
-    processed_img = cv2.resize(frame_gray, (800, 650))
+    processed_img = cv2.resize(frame_gray, (360, 240))
     cv2.imshow('face', frame_gray)
    # cv2.imshow('face', processed_img)
     cv2.waitKey(50)
