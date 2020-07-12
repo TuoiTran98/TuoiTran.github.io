@@ -1,4 +1,4 @@
-import cv2
+"""import cv2
 import numpy as np
 import os
 import sqlite3
@@ -8,7 +8,7 @@ import datetime as dt
 import csv
 import pandas as pd
 from datetime import datetime, timedelta
-# import mysql.connector
+import mysql.connector
 
 #training nhận diện khuôn mặt và các thư viên hỗ trợ
 
@@ -22,67 +22,57 @@ recognizer.read('/DoAnTotNghiep/TuoiTran.github.io/recognizer/trainingData.yml')
 # truy xuất id trong db
 
 def getProfile(id):
-    conn = sqlite3.connect('/DoAnTotNghiep/TuoiTran.github.io/databaseface.db')
-    # conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
-    # cusror = conn.cursor()
-    query = "SELECT * FROM face WHERE id="+ str(id)
-    cusror = conn.execute(query)
+    # conn = sqlite3.connect('/DoAnTotNghiep/TuoiTran.github.io/databaseface.db')
+    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
+    cusror = conn.cursor()
+    # query = "SELECT * FROM face WHERE id="+ str(id)
+    # cusror = conn.execute(query)
 
     # select dữ liệu từ database
-    # cusror.execute("SELECT * FROM face WHERE id="+ str(id))
-    # result = cusror.fetchall()
+    cusror.execute("SELECT * FROM employee WHERE id="+ str(id))
+    result = cusror.fetchall()
 
     profile = None
 
-    for x in cusror:
+    for x in result:
         profile = x
    
     conn.close()
     return profile
 
-def add(id, date, name, start_time, gender, dateofbirth, phonenumber):
+def add(id_name, date, name, start_time, gender, dateofbirth, phonenumber):
 
-    conn = sqlite3.connect('/DoAnTotNghiep/TuoiTran.github.io/databaseface.db')
+    # conn = sqlite3.connect('/DoAnTotNghiep/TuoiTran.github.io/databaseface.db')
 
-    # conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
-    # cusror = conn.cursor()
+    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
+    cusror = conn.cursor()
 
-    query = "SELECT * FROM Timekeeping WHERE id="+ str(id)
-    cusror = conn.execute(query)
+    # query = "SELECT * FROM Timekeeping WHERE id="+ str(id)
+    # cusror = conn.execute(query)
 
     # select dữ liệu từ database
-    # cusror.execute("SELECT * FROM Timekeeping WHERE id="+ str(id))
+    cusror.execute("SELECT * FROM Timekeeping WHERE id="+ str(id_name))
 
     # tìm nạp các hàng từ đối tượng con trỏ  
-    # result = cusror.fetchall()
-    with open('output.csv','w') as out_csv_file:
-        csv_out = csv.writer(out_csv_file)                        
-        csv_out.writerow([d[0] for d in cusror.description])
+    result = cusror.fetchall()
+    # with open('output.csv','w') as out_csv_file:
+    #     csv_out = csv.writer(out_csv_file)                        
+    #     csv_out.writerow([d[0] for d in cusror.description])
 
-        isRecorExist = 0 
-        for x in cusror:
-            csv_out.writerow(x)
-            isRecorExist = 1
-        if(isRecorExist == 0):
-            query = "INSERT INTO Timekeeping(id, date, name, start_time, gender, dateofbirth, phonenumber) VALUES("+ str(id) + ",'"+ str(date)+"','"+ str(name)+"', '"+ str(start_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')"
-            print('add')
+    isRecorExist = 0 
+    for x in result:
+        # csv_out.writerow(x)
+        isRecorExist = 1
+    if(isRecorExist == 0):
+        cusror.execute("INSERT INTO Timekeeping(id_name, date, name, start_time, gender, dateofbirth, phonenumber) VALUES("+ str(id) + ",'"+ str(date)+"','"+ str(name)+"', '"+ str(start_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')")
+        print('add')
 
-        else :
-            # lấy data từ bảng timepeeking lên để so sánh với dữ liệu hiện tại
-            query = "SELECT * FROM Timekeeping where id="+str(id)
-            conn.row_factory = sqlite3.Row
-            cusror = conn.execute(query)
-            rows = cusror.fetchall()
-            for row in rows:
-                
-                print ((row["date"] , row["id"]))
-                print("autoID",row["autoID"])
-                print("id=",str(id))
-                if (str(id) != row["id"]):
-                    query = "INSERT INTO Timekeeping( id, date, name, start_time, gender, dateofbirth, phonenumber) VALUES("+str(id)+",'"+ str(date)+"', '"+ str(name)+"', '"+ str(start_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')"   
-                    print('addupdate')
-            
-    cusror.execute(query)
+    else :
+        # lấy data từ bảng timepeeking lên để so sánh với dữ liệu hiện tại
+        cusror.execute("INSERT INTO Timekeeping( id_name, date, name, start_time, gender, dateofbirth, phonenumber) VALUES("+str(id_name)+",'"+ str(date)+"', '"+ str(name)+"', '"+ str(start_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')")            
+        print('addupdate')  
+        
+# cusror.execute(query)
     conn.commit()
     conn.close()
 
@@ -118,7 +108,7 @@ while(True):
                 # cv2.putText(frame_gray, "" +str(profile[1]), (x + 80, y + h + 30), font, 1, (43, 41 ,182), 2)
                 cv2.putText(frame_gray, "" +str(id), (x, y + h + 30), font, 1, (255 ,0 , 0), 1)
                 cv2.putText(frame_gray, "" +str(profile[1]), (x + 80, y + h + 30), font, 1, (255 ,0 , 0), 1)
-                cv2.putText(frame_gray, "" +str(confidence), (x, y), font, 1, (43, 41 ,182), 2)
+                cv2.putText(frame_gray, "" +str(confidence), (x, y), font, 1, (255 ,0 , 0), 2)
                 if index >  20 :
                     add(str(id), str(dt_string_day) , str(profile[1]), str(start_time), str(profile[2]) ,str(profile[3]) , str(profile[4]) )
                     index = 0
@@ -134,12 +124,4 @@ while(True):
         break
 cap.release()
 cv2.destroyAllWindows()
-
-
-
-
-
-
-
-
-
+"""

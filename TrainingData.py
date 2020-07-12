@@ -1,4 +1,4 @@
-import cv2
+"""import cv2
 import numpy as np
 import os
 from PIL import Image
@@ -47,3 +47,5 @@ cv2.destroyAllWindows
 
 
 getImageWithID(path)
+
+"""

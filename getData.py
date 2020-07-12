@@ -1,4 +1,4 @@
-import cv2
+"""import cv2
 import numpy as np
 import sqlite3
 import os
@@ -6,27 +6,26 @@ import os
 
 
 def insertOrUpdate(id, name, gender, dateofbirth, phonenumber):
-    conn = sqlite3.connect('/DoAnTotNghiep/TuoiTran.github.io/databaseface.db')
+    # conn = sqlite3.connect('/DoAnTotNghiep/TuoiTran.github.io/databaseface.db')
 
-    # conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
-    # cusror = conn.cursor()
+    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
+    cusror = conn.cursor()
     # select dữ liệu từ database
-    # cusror.execute("SELECT * FROM face WHERE id="+ str(id))
+    cusror.execute("SELECT * FROM face WHERE id="+ str(id))
     # tìm nạp các hàng từ đối tượng con trỏ  
-    # result = cusror.fetchall()
-    query = "SELECT * FROM face WHERE id="+ str(id)
-    cusror = conn.execute(query)
+    result = cusror.fetchall()
+    # query = "SELECT * FROM face WHERE id="+ str(id)
+    # cusror = conn.execute(query)
     
     isRecorExist = 0
-    for x in cusror:
+    for x in result:
         isRecorExist = 1
     if(isRecorExist == 0):
-        query = "INSERT INTO face(id, name, gender, dateofbirth, phonenumber) VALUES("+ str(id) + ",'"+str(name)+"','"+str(gender)+"','"+str(dateofbirth)+"','"+str(phonenumber)+"')"
-        print('add:', str(query))
+        cusror.execute("INSERT INTO employee(id, name, gender, dateofbirth, phonenumber) VALUES("+ str(id) + ",'"+str(name)+"','"+str(gender)+"','"+str(dateofbirth)+"','"+str(phonenumber)+"')")
+        
     else:
-        query = "UPDATE face SET name='" + str(name) + "', gender='" + str(gender) + "' , dateofbirth='" + str(dateofbirth) + "', phonenumber='" + str(phonenumber) + "'WHERE id="+str(id)
-        print('update:', str(query))
-    cusror.execute(query)
+        cusror.execute("UPDATE employee SET name='" + str(name) + "', gender='" + str(gender) + "' , dateofbirth='" + str(dateofbirth) + "', phonenumber='" + str(phonenumber) + "'WHERE id="+str(id))
+    # cusror.execute(query)
     conn.commit()
     conn.close()
 
@@ -93,4 +92,4 @@ while(True):
         break
 cap.release()
 cv2.destroyAllWindows()
-    
+"""
