@@ -45,11 +45,11 @@ def getProfile(id):
         profile = x
     conn.close()
     return profile
-def add(id_name, date, name, start_time, gender, dateofbirth, phonenumber):
+def add(id, id_name, date, name, start_time,end_time, gender, dateofbirth, phonenumber):
 
     # conn = sqlite3.connect('/Users/Tuoi Tran/Desktop/python_winform/databaseface.db')
 
-    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
+    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="doan")
     cusror = conn.cursor()
 
     # query = "SELECT * FROM Timekeeping WHERE id="+ str(id)
@@ -58,17 +58,28 @@ def add(id_name, date, name, start_time, gender, dateofbirth, phonenumber):
     # select  database
     cusror.execute("SELECT * FROM Timekeeping WHERE id_name="+ str(id_name))
     result = cusror.fetchall()
-
+    
     isRecorExist = 0
     for x in result:
         isRecorExist = 1
     if(isRecorExist == 0):
-        cusror.execute("INSERT INTO Timekeeping(id_name, date, name, start_time, gender, dateofbirth, phonenumber) VALUES("+ str(id_name) + ",'"+ str(date)+"','"+ str(name)+"', '"+ str(start_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')")
+        cusror.execute("INSERT INTO Timekeeping(id_name, date, name, start_time, end_time, gender, dateofbirth, phonenumber) VALUES("+ str(id_name) + ",'"+ str(date)+ "','"+ str(name)+"', '"+ str(start_time)+"','"+ str(end_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')")
         print('add')
         
     else :
-        cusror.execute("INSERT INTO Timekeeping( id_name, date, name, start_time, gender, dateofbirth, phonenumber) VALUES("+str(id_name)+",'"+ str(date)+"', '"+ str(name)+"', '"+ str(start_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')")            
-        print('addupdate')  
+ 
+        if ((str(date) != x[2] and str(id_name) == x[1] )):
+            # print('date hien tai:', str(date))
+            # print('date data:', x[2])
+            # print('id data:', x[1])
+            # print('id hien tai:', str(id_name))
+            cusror.execute("INSERT INTO Timekeeping(id_name, date,  name, start_time, end_time, gender, dateofbirth, phonenumber) VALUES( "+str(id_name)+",'"+ str(date)+"','"+ str(name)+"', '"+ str(start_time)+"','"+ str(end_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')" )
+            print('addupdate')
+        else :
+            cusror.execute("UPDATE Timekeeping SET  end_time='" + str(end_time) + "' WHERE id_name=" + str(id_name) + " and id="+ str(x[0]) )
+            # print('autoID:', x[0])
+            # print('id:', str(id_name))
+            # print('update')
     # result.execute(query)
     conn.commit()
     conn.close()
@@ -76,7 +87,7 @@ def add(id_name, date, name, start_time, gender, dateofbirth, phonenumber):
 def InsertUpdateData(id, name, gender, dateofbirth, phonenumber):
     # conn = sqlite3.connect('/Users/Tuoi Tran/Desktop/python_winform/databaseface.db')
 
-    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
+    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="doan")
     cusror = conn.cursor()
     # select database
     cusror.execute("SELECT * FROM employee WHERE id="+ str(id))
@@ -149,18 +160,19 @@ class frame(MainFrame):
                     profile = getProfile(id)
                     if(profile != None):
 
-                        now = datetime.now()
-                        dt_string_day = now.strftime("%m/%d/%Y")
-                        start_time = now.strftime("%H:%M:%S")
-                        
                         # cv2.putText(frame_gray, "" +str(profile[1]), (x + 80, y + h + 30), font, 1, (43, 41 ,182), 2)
                         cv2.putText(frame_gray, "" +str(id), (x, y + h + 30), font, 1, (255 ,0 , 0), 1)
                         cv2.putText(frame_gray, "" +str(profile[1]), (x + 80, y + h + 30), font, 1, (255 ,0 , 0), 1)
+                        
+                        now = datetime.now()
+                        dt_string_day = now.strftime("%m/%d/%Y")
+                        start_time = now.strftime("%H:%M:%S")
+                        end_time = now.strftime("%H:%M:%S")
+
                         cv2.putText(frame_gray, "" +str(confidence), (x, y), font, 1, (255 ,0 , 0), 2)
                         if index >  20 :
-                            add(str(id), str(dt_string_day) , str(profile[1]), str(start_time), str(profile[2]) ,str(profile[3]) , str(profile[4]) )
+                            add(str(profile[0]),str(id), str(dt_string_day), str(profile[1]), str(start_time), str(end_time),str(profile[2]) ,str(profile[3]) , str(profile[4]) )
                             index = 0
-                        # cv2.putText(frame_gray, "Successful !", (x, y), font, 1, (43, 41 ,182), 1)
                 else:
                     cv2.putText(frame_gray, "Unknow", (x + 10, y + h + 30), font, 1, (255 ,0 , 0), 1)
             
