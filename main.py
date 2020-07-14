@@ -8,16 +8,17 @@ import datetime as dt
 import csv
 import pandas as pd
 from datetime import datetime, timedelta
-
 import wx
-#import mysql
 from main_frame import MainFrame , Getdata
 import mysql.connector
+
 wildcard = "Python source (*.py; *.pyc)|*.py;*.pyc|" \
          "All files (*.*)|*.*"
 
+# 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades +'haarcascade_frontalface_alt.xml')
 
+# Tập dữ liệu training
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('/DoAnTotNghiep/TuoiTran.github.io/python/recognizer/trainingData.yml')
 
@@ -45,6 +46,7 @@ def getProfile(id):
         profile = x
     conn.close()
     return profile
+# thêm dữ liệu vào bảng timekeeping
 def add(id, id_name, date, name, start_time,end_time, gender, dateofbirth, phonenumber):
 
     # conn = sqlite3.connect('/Users/Tuoi Tran/Desktop/python_winform/databaseface.db')
@@ -63,27 +65,22 @@ def add(id, id_name, date, name, start_time,end_time, gender, dateofbirth, phone
     for x in result:
         isRecorExist = 1
     if(isRecorExist == 0):
+        # thêm dữ liệu mới
         cusror.execute("INSERT INTO Timekeeping(id_name, date, name, start_time, end_time, gender, dateofbirth, phonenumber) VALUES("+ str(id_name) + ",'"+ str(date)+ "','"+ str(name)+"', '"+ str(start_time)+"','"+ str(end_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')")
         print('add')
         
     else :
- 
+        # so sánh ngày, id trong data  với ngày , id xuất hiện để thêm vào data 
         if ((str(date) != x[2] and str(id_name) == x[1] )):
-            # print('date hien tai:', str(date))
-            # print('date data:', x[2])
-            # print('id data:', x[1])
-            # print('id hien tai:', str(id_name))
             cusror.execute("INSERT INTO Timekeeping(id_name, date,  name, start_time, end_time, gender, dateofbirth, phonenumber) VALUES( "+str(id_name)+",'"+ str(date)+"','"+ str(name)+"', '"+ str(start_time)+"','"+ str(end_time)+"', '"+ str(gender)+"', '"+ str(dateofbirth)+"', '"+ str(phonenumber)+"')" )
             print('addupdate')
+        # cập nhật lại end_time khi người đó đã có trong dư liệu vào ngày hôm đó
         else :
             cusror.execute("UPDATE Timekeeping SET  end_time='" + str(end_time) + "' WHERE id_name=" + str(id_name) + " and id="+ str(x[0]) )
-            # print('autoID:', x[0])
-            # print('id:', str(id_name))
-            # print('update')
-    # result.execute(query)
     conn.commit()
     conn.close()
 
+# tạo dữ liệu mới vào employee
 def InsertUpdateData(id, name, gender, dateofbirth, phonenumber):
     # conn = sqlite3.connect('/Users/Tuoi Tran/Desktop/python_winform/databaseface.db')
 
@@ -106,9 +103,9 @@ def InsertUpdateData(id, name, gender, dateofbirth, phonenumber):
     conn.commit()
     conn.close()
 
+# hàm training
 def getImageWithID(path):
     imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
-
     faces = []
     IDs = []
     for imagePath in imagePaths:
@@ -139,6 +136,7 @@ class frame(MainFrame):
         cv2.destroyAllWindows()
         dialog.Destroy()
         self.Destroy()
+    # xử lí lưu data về
     def m_button_runOnButtonClick(self, event):
         index  = 0
         while(True):
@@ -160,7 +158,6 @@ class frame(MainFrame):
                     profile = getProfile(id)
                     if(profile != None):
 
-                        # cv2.putText(frame_gray, "" +str(profile[1]), (x + 80, y + h + 30), font, 1, (43, 41 ,182), 2)
                         cv2.putText(frame_gray, "" +str(id), (x, y + h + 30), font, 1, (255 ,0 , 0), 1)
                         cv2.putText(frame_gray, "" +str(profile[1]), (x + 80, y + h + 30), font, 1, (255 ,0 , 0), 1)
                         
@@ -171,7 +168,10 @@ class frame(MainFrame):
 
                         cv2.putText(frame_gray, "" +str(confidence), (x, y), font, 1, (255 ,0 , 0), 2)
                         if index >  20 :
-                            add(str(profile[0]),str(id), str(dt_string_day), str(profile[1]), str(start_time), str(end_time),str(profile[2]) ,str(profile[3]) , str(profile[4]) )
+                            
+                            add(str(profile[0]),str(id), str(dt_string_day), str(profile[1]), str(start_time), str(end_time),str(profile[2]) ,str(profile[3]) , str(profile[4]) ) 
+                            cv2.putText(frame_gray, "Done !", (x+200, y+100), font, 1, (255, 0, 0), 2)
+                            time.sleep(1)                           
                             index = 0
                 else:
                     cv2.putText(frame_gray, "Unknow", (x + 10, y + h + 30), font, 1, (255 ,0 , 0), 1)
@@ -184,7 +184,7 @@ class frame(MainFrame):
                 break
          
         cv2.destroyAllWindows()
- 
+    #  training data
     def m_button_train_datasetOnButtonClick( self, event ):
         path = 'dataSet'
         getImageWithID(path)
@@ -203,6 +203,7 @@ class getdata(Getdata):
         Getdata.__init__(self, parent)
     def m_sdbSizerOnCancelButtonClick( self, event ):
         event.Skip()
+    # tạo mới dữ liệu
     def m_sdbSizerOnOKButtonClick(self, event):
         id = self.id_textCtrl.GetLineText(0)
         name = self.name_textCtrl.GetLineText(0)
