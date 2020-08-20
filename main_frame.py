@@ -8,6 +8,23 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"FACE RECOGNIZER", pos = wx.DefaultPosition, size = wx.Size( 500,500 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
         self.SetSizeHints( wx.Size( 500,500 ), wx.DefaultSize )
         self.Colour()
+        self.m_menubar = wx.MenuBar( 0 )
+        self.m_menu_file = wx.Menu()
+        self.m_menuItem_exit = wx.MenuItem( self.m_menu_file, wx.ID_ANY, u"Exit"+ u"\t" + u"F1", u"exit program", wx.ITEM_NORMAL )
+        self.m_menu_file.Append( self.m_menuItem_exit )
+
+        self.m_menubar.Append( self.m_menu_file, u"File" )
+
+        self.m_menu_about = wx.Menu()
+        self.m_menuItem_about = wx.MenuItem( self.m_menu_about, wx.ID_ANY, u"Tutorial", u"tutorial program", wx.ITEM_NORMAL )
+        self.m_menu_about.Append( self.m_menuItem_about )
+
+        self.m_menubar.Append( self.m_menu_about, u"Tutorial" )
+
+        self.SetMenuBar( self.m_menubar )
+
+        self.m_statusBar = self.CreateStatusBar( 1, wx.STB_SIZEGRIP, wx.ID_ANY )
+        bSizer = wx.BoxSizer( wx.VERTICAL )
 
         bSizer3 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -38,15 +55,17 @@ class MainFrame(wx.Frame):
         self.SetSizer(bSizer3)
 
         #connect events
+        self.Bind( wx.EVT_MENU, self.m_menuItem_exitOnMenuSelection, id = self.m_menuItem_exit.GetId() )
+        self.Bind( wx.EVT_MENU, self.m_menuItem_aboutOnMenuSelection, id = self.m_menuItem_about.GetId() )
         self.Bind( wx.EVT_CLOSE, self.mainframeOnClose )
         self.m_button_run.Bind( wx.EVT_BUTTON, self.m_button_runOnButtonClick )
         self.m_button_train_dataset.Bind( wx.EVT_BUTTON, self.m_button_train_datasetOnButtonClick )
         self.m_button_create_dataset.Bind( wx.EVT_BUTTON, self.m_button_create_datasetOnButtonClick )
 
-        # panel = wx.Panel(self, wx.ID_ANY)
- 
-        # btn = wx.Button(panel, label="Open File Dialog")
-        # btn.Bind(wx.EVT_BUTTON, self.onOpenFile)
+    def m_menuItem_exitOnMenuSelection( self, event ):
+        event.Skip()
+    def m_menuItem_aboutOnMenuSelection( self, event ):
+        event.Skip()
     def Colour(self):
         self.SetBackgroundColour('#EFFBFB')
     def __del__( self ):
@@ -61,8 +80,6 @@ class MainFrame(wx.Frame):
 
     def m_button_create_datasetOnButtonClick( self, event ):
         event.Skip()
-    # def onOpenFile(self, event):
-    #     event.Skip()
 
 class Getdata(wx.Dialog):
     def __init__(self, parent):
@@ -105,6 +122,18 @@ class Getdata(wx.Dialog):
         bSizer.Add( self.phone_staticText, 0, wx.LEFT, 50 )
         self.phone_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(150,20 ), 0 )
         bSizer.Add( self.phone_textCtrl, 0, wx.LEFT, 70 )
+
+        self.position_staticText = wx.StaticText(self, wx.ID_ANY, "Posotion:", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.position_staticText.Wrap( -1 )
+        bSizer.Add( self.position_staticText, 0, wx.LEFT, 50 )
+        self.position_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(150,20 ), 0 )
+        bSizer.Add( self.position_textCtrl, 0, wx.LEFT, 70 )
+
+        self.salary_staticText = wx.StaticText(self, wx.ID_ANY, "Salary:", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.salary_staticText.Wrap( -1 )
+        bSizer.Add( self.salary_staticText, 0, wx.LEFT, 50 )
+        self.salary_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(150,20 ), 0 )
+        bSizer.Add( self.salary_textCtrl, 0, wx.LEFT, 70 )
 
 
 		

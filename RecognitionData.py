@@ -1,4 +1,4 @@
-"""import cv2
+import cv2
 import numpy as np
 import os
 import sqlite3
@@ -17,13 +17,13 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades +'haarcascade_frontal
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 
-recognizer.read('/DoAnTotNghiep/TuoiTran.github.io/recognizer/trainingData.yml')
+recognizer.read('/DoAnTotNghiep/TuoiTran.github.io/winform_python/recognizer/trainingData.yml')
 
 # truy xuất id trong db
 
 def getProfile(id):
     # conn = sqlite3.connect('/DoAnTotNghiep/TuoiTran.github.io/databaseface.db')
-    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
+    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "", database="doan")
     cusror = conn.cursor()
     # query = "SELECT * FROM face WHERE id="+ str(id)
     # cusror = conn.execute(query)
@@ -44,7 +44,7 @@ def add(id_name, date, name, start_time, gender, dateofbirth, phonenumber):
 
     # conn = sqlite3.connect('/DoAnTotNghiep/TuoiTran.github.io/databaseface.db')
 
-    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="facedetection")
+    conn = mysql.connector.connect(host = "localhost", user = "root", passwd = "123456", database="doan")
     cusror = conn.cursor()
 
     # query = "SELECT * FROM Timekeeping WHERE id="+ str(id)
@@ -124,4 +124,3 @@ while(True):
         break
 cap.release()
 cv2.destroyAllWindows()
-"""
